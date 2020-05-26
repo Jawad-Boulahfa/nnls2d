@@ -1,8 +1,8 @@
-# test : two examples
+# nnls2d : two examples
 
 ### To install the package from github
 ```r
-devtools::install_github("Jawad-Boulahfa/test")
+devtools::install_github("Jawad-Boulahfa/nnls2d")
 ```
 
 ### Example 1: one explanatory variable
