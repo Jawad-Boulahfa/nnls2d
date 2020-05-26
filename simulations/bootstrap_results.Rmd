@@ -1,0 +1,298 @@
+---
+title: "Bootstrap"
+author: "Jawad Boulahfa"
+date: "06/05/2020"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Deuxième partie: bootstrap
+```{r}
+rm(list = ls())
+```
+
+## Installation du package test
+```{r}
+#devtools::install_github("Jawad-Boulahfa/test")
+```
+
+## Chargement des packages
+```{r, message=FALSE, warning = FALSE}
+# Pour pcls2 et les fonctions de simulation
+library(test, quietly = TRUE)
+
+# Pour le calcul parallèle
+library(foreach, quietly = TRUE)
+library(iterators, quietly = TRUE)
+library(parallel, quietly = TRUE)
+library(doParallel, quietly = TRUE)
+
+# Pour ggplot2 et la manipulation des dataframes
+library(tidyverse, quietly = TRUE)
+
+# Pour tracer plusieurs graphiques en même temps
+library(gridExtra, quietly = TRUE)
+
+# Pour construire des heatmap
+library(reshape2, quietly = TRUE)
+
+# Pour construire des heatmap
+library(hrbrthemes)
+library(plotly)
+library(webshot)
+```
+
+
+## Initialisation
+```{r}
+n <- 1000 # Nombre de lignes
+sigma <- 1 # Ecart-type du bruit gaussien
+beta <- c(0, 1) # Choix du beta
+
+prop <- 0.7 # Proportion de données prises pour rééchantillonner
+replace <- TRUE # On autorise les répétitions dans le rééchantillonnage
+
+B <- 200 # Nombre de fois où on répète le réechantillonnage (pour le bootstrap)
+
+alpha <- 0.05 # Pour les intervalles de confiance à 95%
+
+nb_classes <- 50 # Nombre de classes pour les histogrammes
+
+# Nombre de fois où on refait un bootstrap
+# pour construire un nouvel intervalle de confiance
+# Autrement dit, on construira 100 IC ici (via 100 bootstrap)
+nb_repetitions <- 100 
+```
+
+## Premier essai
+
+On calcule $\hat\beta_{nnls}$ et $\hat\beta_{lm}$ pour chaque jeu de données rééchantillonné ($nombre~de~rééchantillonnages = `r  B`,~n = `r  n` ,~\sigma = `r  sigma`, \beta = \begin{pmatrix} 0 \\ 1 \end{pmatrix}$).
+```{r}
+essai <- test::beta_list(n = n, sigma = sigma,
+                         beta = beta, prop = prop,
+                         replace = replace, B = B)
+```
+
+On affiche un aperçu des résultats obtenus.
+```{r}
+print(essai, max = 10)
+```
+La variable essai contient:
+
+- un dataframe contenant les valeurs de $\hat\beta_{nnls_1}$ et $\hat\beta_{nnls_2}$
+- un dataframe contenant $\hat\beta_{lm_1}$ et $\hat\beta_{lm_2}$
+
+- un dataframe contenant les valeurs de $\hat\beta_{nnls_1}$ et $\hat\beta_{lm_1}$
+regroupées sur une colonne (et qu'on peut distinguer à l'aide de la colonne "model")
+un dataframe contenant les valeurs de $\hat\beta_{nnls_2}$ et $\hat\beta_{lm_2}$ regroupées sur une colonne (et qu'on peut distinguer à l'aide de la colonne "model")
+
+- un dataframe contenant le biais de chaque composante des deux estimateurs.
+- un dataframe contenant la variance de chaque composante des deux estimateurs.
+- un dataframe contenant l'erreur quadratique moyenne de chaque composante des deux estimateurs
+
+- un dataframe contenant les intervalles de confiance au niveau de confiance $`r  1-alpha`$% de chaque composante des deux estimateurs.
+
+
+
+## Histogrammes et indicateurs
+```{r}
+distribution <- test::distribution_beta(
+  n = n, sigma = sigma, beta = beta,
+  prop = prop, replace = replace, B = B)
+```
+
+### Affichage des 4 histogrammes séparément
+On affiche la distribution de chacune des composantes de $\hat\beta_{nnls}$ et $\hat\beta_{lm}$ ($nombre~de~rééchantillonnages = `r  B`,~n = `r  n`,~\sigma = `r  sigma`$).
+```{r}
+grid.arrange(distribution$beta_nnls_1_hist,
+             distribution$beta_nnls_2_hist,
+             nrow = 2, ncol = 1) # OK
+```
+
+```{r}
+grid.arrange(distribution$beta_lm_1_hist,
+             distribution$beta_lm_2_hist,
+             nrow = 2, ncol = 1) # OK
+```
+
+
+### Comparaisons entre les modèles nnls et lm
+```{r}
+grid.arrange(distribution$comparison_1_hist,
+             distribution$comparison_2_hist,
+             nrow = 2, ncol = 1)
+```
+
+### Comparaisons sans le pic en 0 pour nnls
+```{r}
+grid.arrange(distribution$comparison_1_hist_without_0,
+             distribution$comparison_2_hist_without_0,
+             nrow = 2, ncol = 1) 
+```
+
+### Biais, variance, erreur quadratique moyenne
+On affiche le biais, la variance, et l'erreur quadratique moyenne de chaque composante de chacun des estimateurs.
+```{r}
+# Biais
+print(distribution$biais_df)
+
+# Variance
+print(distribution$var_df)
+
+# MSE
+print(distribution$MSE_df)
+```
+
+On peut rassembler tous ces résultats dans un seul dataframe pour plus de lisibilité.
+```{r}
+biais_var_MSE_df <- cbind(distribution$biais_df,
+                          distribution$var_df,
+                          distribution$MSE_df)
+```
+
+
+```{r}
+print(biais_var_MSE_df)
+```
+
+## Intervalles de confiance au niveau de confiance $`r  1-alpha`$%
+
+### Intervalles de confiance pour $\beta = \begin{pmatrix} 0 \\ 1 \end{pmatrix}$
+```{r}
+print(distribution$IC_df)
+```
+
+### Rapport d'amplitude des intervalles de confiance $\beta = \begin{pmatrix} 0 \\ 1 \end{pmatrix}$
+```{r}
+coeff_1 <- diff(distribution$IC_df$IC_nnls_1)/
+  diff(distribution$IC_df$IC_lm_1)
+coeff_2 <- diff(distribution$IC_df$IC_nnls_2)/
+  diff(distribution$IC_df$IC_lm_2)
+```
+
+```{r}
+print(coeff_1)
+print(coeff_2)
+```
+
+L'amplitude de IC_nnls_1 vaut $`r  coeff_1`$ fois celle de IC_lm_1.
+L'amplitude de IC_nnls_2 vaut $`r  coeff_2`$ fois celle de IC_lm_2.
+
+Ainsi, les intervalles de confiance obtenus pour chaque composante de $\hat\beta_{nnls}$ ont une plus petite amplitude que ceux obtenus pour chaque composante de $\hat\beta_{lm}$.
+
+
+### Intervalles de confiance pour $\beta \in \left \{ \begin{pmatrix} 0 \\ k \end{pmatrix}\mid k \in \{0,1k' \mid 0 \le k' \le 10\} \right \}$
+On construit une liste de beta.
+```{r}
+nb_beta <- 11
+end <- 1
+
+liste_beta_1 <- rep(0, nb_beta)
+
+liste_beta_2 <- seq(from = 0, to = end, by = end/(nb_beta-1))
+
+list_of_beta <- vector("list", length = nb_beta)
+
+for(i in 1:nb_beta)
+{
+  list_of_beta[[i]] <- c(liste_beta_1[[i]], liste_beta_2[[i]])
+}
+```
+
+On affiche la liste.
+```{r}
+print(list_of_beta)
+```
+
+On calcule les intervalles de confiance à $`r  1-alpha`$%.
+```{r}
+liste_IC <- IC_beta(list_of_beta = list_of_beta,
+                    n = n, sigma = sigma,
+                    prop = prop,
+                    replace = replace, B = B) # OK
+```
+
+On affiche les intervalles de confiance obtenus.
+```{r}
+print(liste_IC)
+```
+
+## Tests
+
+### Tests pour $\beta = \begin{pmatrix} 0 \\ 1 \end{pmatrix}$
+On effectue $`r  nb_repetitions`$ bootstrap et on construit un intervalle de confiance à chaque bootstrap.
+Ensuite, nous effectuons deux tests.
+On teste $\beta_1 = 0$ contre $\beta_1 \neq 0$ pour les deux modèles en utilisant les intervalles de confiance construits pour $\hat\beta_{nnls_1}$ et $\hat\beta_{lm_1}$.
+On teste $\beta_2 = 0$ contre $\beta_2 \neq 0$ pour les deux modèles en utilisant les intervalles de confiance construits pour $\hat\beta_{nnls_2}$ et $\hat\beta_{lm_2}$.
+```{r}
+results_test_beta <- test_beta(
+  nb_repetitions = nb_repetitions,
+  n = n, sigma = sigma, beta = beta,
+  prop = prop, replace = replace,
+  B = B, alpha = alpha,
+  nb_classes = nb_classes)
+```
+
+On affiche les résultats obtenus.
+```{r}
+print(results_test_beta)
+```
+
+Les deux modèles détectent ici aussi bien la non-nullité de $\beta_2$.
+Néanmoins, le modèle nnls est meilleur pour détecter la nullité de $\beta_1$.
+On va maintenant effectuer davantage de tests en changeant les valeurs de $\beta$ et commenter les résultats obtenus.
+
+### Tests pour $\beta \in \left \{ \begin{pmatrix} 0 \\ k \end{pmatrix} \mid k \in \{0,1k' \mid 0 \le k' \le 10\} \right \}$
+On effectue les deux tests évoqués ci-dessus, de la même manière que précédemment, mais pour chaque valeur de $\beta$ dans la liste donnée en paramètre.
+```{r}
+results_test_list_of_beta <- test_beta_grid(
+  beta_grid = list_of_beta,
+  nb_repetitions = nb_repetitions,
+  n = n, sigma = sigma, prop = prop,
+  replace = replace, B = B,
+  alpha = alpha, nb_classes = nb_classes)
+```
+
+On affiche les résultats des tests.
+```{r}
+print(results_test_list_of_beta)
+```
+On remarque que la fréquence de rejet obtenue avec le modèle nnls est toujours inférieure ou égale à celle obtenue avec le modèle lm.
+
+C'est une bonne chose lorsque $\beta = \begin{pmatrix} 0 \\ 0 \end{pmatrix}$, car cela montre que le modèle nnls détecte mieux la nullité des deux coefficients.
+
+Sur les autres valeurs de $\beta$, comme on a gardé $\beta_1 = 0$, cela montre que le modèle nnls détecte également mieux la nullité d'un seul coefficient.
+
+Néanmoins, cela signifie aussi que le modèle nnls détecte moins bien la non-nullité d'un coefficient.
+
+En effet, ici, on souhaiterait que, lorsque $\beta_2 \neq 0$, la fréquence de rejet obtenue avec le modèle nnls soit proche voire égale à 1, et supérieure ou égale à celle obtenue avec le modèle lm.
+
+Si la fréquence de rejet obtenue avec le modèle nnls augmente bien jusqu'à finalement atteindre 1, elle augmente moins vite que celle obtenue avec le modèle lm.
+
+## Sauvegarde des résultats
+```{r}
+save.image(file = "bootstrap_results.RData")
+```
+
+## Chargement des résultats
+```{r}
+rm(list = ls())
+```
+
+```{r}
+load(file = "bootstrap_results.RData")
+```
+
+```{r}
+rm(list = ls())
+```
+
+
+
