@@ -1,4 +1,4 @@
-Package: test
+Package: nnls2d
 Type: Package
 Title: Comparison between the Non-negative least squares model and the multiple linear regression model (using the standard uniform distribution)
 Version: 0.1.0
@@ -7,7 +7,7 @@ Maintainer: Jawad Boulahfa <yourself@somewhere.net>
 Description: Function to generate a dataset where the input variables have a standard uniform distribution.
     Functions to solve the positively constrained least squares problem with one or two explonatary variables.
     Functions to simulate data (with bootstrap) using the standard uniform distribution and compare the two models.
-License: What license is it under?
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.0
