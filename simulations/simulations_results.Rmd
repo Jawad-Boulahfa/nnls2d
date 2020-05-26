@@ -20,13 +20,13 @@ rm(list = ls())
 
 ## Installation du package test
 ```{r}
-#devtools::install_github("Jawad-Boulahfa/test")
+#devtools::install_github("Jawad-Boulahfa/nnls2d")
 ```
 
 ## Chargement des packages
 ```{r, message=FALSE, warning = FALSE}
 # Pour pcls2 et les fonctions de simulation
-library(test, quietly = TRUE)
+library(nnls2d, quietly = TRUE)
 
 # Pour le calcul parallèle
 library(foreach, quietly = TRUE)
@@ -113,7 +113,7 @@ Le paramètre "cores" est utilisé pour le calcul parallèle.
 
 On doit ajouter le paramètre FUN pour éviter une erreur (la fonction one.simu n'est pas trouvée sinon).
 ```{r}
-simulations <- test::simulations(cores = cores,
+simulations <- nnls2d::simulations(cores = cores,
                            liste_n = liste_n,
                            liste_sigma = liste_sigma,
                            beta = beta, nb_one_simu = nb_one_simu,

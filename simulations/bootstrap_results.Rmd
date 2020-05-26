@@ -20,13 +20,13 @@ rm(list = ls())
 
 ## Installation du package test
 ```{r}
-#devtools::install_github("Jawad-Boulahfa/test")
+#devtools::install_github("Jawad-Boulahfa/nnls2d")
 ```
 
 ## Chargement des packages
 ```{r, message=FALSE, warning = FALSE}
 # Pour pcls2 et les fonctions de simulation
-library(test, quietly = TRUE)
+library(nnls2d, quietly = TRUE)
 
 # Pour le calcul parallèle
 library(foreach, quietly = TRUE)
@@ -75,7 +75,7 @@ nb_repetitions <- 100
 
 On calcule $\hat\beta_{nnls}$ et $\hat\beta_{lm}$ pour chaque jeu de données rééchantillonné ($nombre~de~rééchantillonnages = `r  B`,~n = `r  n` ,~\sigma = `r  sigma`, \beta = \begin{pmatrix} 0 \\ 1 \end{pmatrix}$).
 ```{r}
-essai <- test::beta_list(n = n, sigma = sigma,
+essai <- nnls2d::beta_list(n = n, sigma = sigma,
                          beta = beta, prop = prop,
                          replace = replace, B = B)
 ```
@@ -103,7 +103,7 @@ un dataframe contenant les valeurs de $\hat\beta_{nnls_2}$ et $\hat\beta_{lm_2}$
 
 ## Histogrammes et indicateurs
 ```{r}
-distribution <- test::distribution_beta(
+distribution <- nnls2d::distribution_beta(
   n = n, sigma = sigma, beta = beta,
   prop = prop, replace = replace, B = B)
 ```
