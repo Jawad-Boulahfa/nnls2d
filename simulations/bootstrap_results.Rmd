@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 rm(list = ls())
 ```
 
-## Installation du package test
+## Installation du package nnls2d
 ```{r}
 #devtools::install_github("Jawad-Boulahfa/nnls2d")
 ```
