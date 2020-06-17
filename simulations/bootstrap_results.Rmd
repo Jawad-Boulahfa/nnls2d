@@ -213,7 +213,7 @@ print(list_of_beta)
 
 On calcule les intervalles de confiance à $`r  1-alpha`$%.
 ```{r}
-liste_IC <- IC_beta(list_of_beta = list_of_beta,
+liste_IC <- nnls2d::IC_beta(list_of_beta = list_of_beta,
                     n = n, sigma = sigma,
                     prop = prop,
                     replace = replace, B = B) # OK
@@ -232,7 +232,7 @@ Ensuite, nous effectuons deux tests.
 On teste $\beta_1 = 0$ contre $\beta_1 \neq 0$ pour les deux modèles en utilisant les intervalles de confiance construits pour $\hat\beta_{nnls_1}$ et $\hat\beta_{lm_1}$.
 On teste $\beta_2 = 0$ contre $\beta_2 \neq 0$ pour les deux modèles en utilisant les intervalles de confiance construits pour $\hat\beta_{nnls_2}$ et $\hat\beta_{lm_2}$.
 ```{r}
-results_test_beta <- test_beta(
+results_test_beta <- nnls2d::test_beta(
   nb_repetitions = nb_repetitions,
   n = n, sigma = sigma, beta = beta,
   prop = prop, replace = replace,
@@ -252,7 +252,7 @@ On va maintenant effectuer davantage de tests en changeant les valeurs de $\beta
 ### Tests pour $\beta \in \left \{ \begin{pmatrix} 0 \\ k \end{pmatrix} \mid k \in \{0,1k' \mid 0 \le k' \le 10\} \right \}$
 On effectue les deux tests évoqués ci-dessus, de la même manière que précédemment, mais pour chaque valeur de $\beta$ dans la liste donnée en paramètre.
 ```{r}
-results_test_list_of_beta <- test_beta_grid(
+results_test_list_of_beta <- nnls2d::test_beta_grid(
   beta_grid = list_of_beta,
   nb_repetitions = nb_repetitions,
   n = n, sigma = sigma, prop = prop,
