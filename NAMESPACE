@@ -1,3 +1,4 @@
 exportPattern("^[[:alpha:]]+")
 importFrom("stats", "rnorm", "runif")
 importFrom("pbivnorm", "pbivnorm")
+importFrom("stats", "dnorm", "pnorm")
