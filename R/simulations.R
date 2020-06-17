@@ -24,7 +24,7 @@ one.simu <- function(i, X,
   linear_regression_model <- lm(Y ~ X1 + X2 - 1, data = dataset)
 
   # Estimators
-  tmp <- test::pcls2(X = X, Y = Y)
+  tmp <- nnls2d::pcls2(X = X, Y = Y)
   beta_nnls <- tmp$beta
   beta_lm <- as.list(linear_regression_model$coefficients)
 
@@ -605,7 +605,7 @@ one.sample <- function(Y, X, beta = c(0,0), sigma = 1,
   X_sample <- as.data.frame(cbind(X1_sample, X2_sample))
 
   # nnls
-  tmp <- test::pcls2(X = X_sample, Y = Y_sample)
+  tmp <- nnls2d::pcls2(X = X_sample, Y = Y_sample)
   beta_nnls_sample <- tmp$beta
 
   # Multiple linear regression
@@ -635,7 +635,7 @@ bootstrap <- function(n = 10^3, sigma = 1, beta = c(0,0), prop = 0.7,
                       replace = TRUE, B = 10)
 {
   # Création du jeu de données
-  tmp <- test::dataGenerator(n = n, sigma = sigma, beta = beta)
+  tmp <- nnls2d::dataGenerator(n = n, sigma = sigma, beta = beta)
 
   # On renomme pour plus de lisibilité
   Y <- tmp$Y
