@@ -159,15 +159,11 @@ simulations <- function(cores, liste_n, liste_sigma, beta = c(0,1),
       #tmp1_lm <- paste(
       #  "Distribution de beta_lm_2 pour la simulation no.", indice)
 
-      tmp0_nnls <- paste(
-        "Distribution de beta_nnls_1")
-      tmp1_nnls <- paste(
-        "Distribution de beta_nnls_2")
+      tmp0_nnls <- "Distribution de beta_nnls_1"
+      tmp1_nnls <- "Distribution de beta_nnls_2"
       
-      tmp0_lm <- paste(
-        "Distribution de beta_lm_1")
-      tmp1_lm <- paste(
-        "Distribution de beta_lm_2")
+      tmp0_lm <- "Distribution de beta_lm_1"
+      tmp1_lm <- "Distribution de beta_lm_2"
       
       #tmp_comparison <- paste(
       #  "Comparaison des distributions de")
@@ -184,18 +180,12 @@ simulations <- function(cores, liste_n, liste_sigma, beta = c(0,1),
       #  paste("beta_nnls_2 (valeurs > 0) et de beta_lm_2 pour la simulation no.",
       #        indice)
 
-      tmp_comparison <- paste(
-        "Comparaison des distributions de")
-      tmp0_comparison <- paste(
-        "beta_nnls_1 et de beta_lm_1")
-      tmp1_comparison <-
-        paste(
-          "beta_nnls_2 et de beta_lm_2")
+      tmp_comparison <- "Comparaison des distributions de"
+      tmp0_comparison <- "beta_nnls_1 et de beta_lm_1"
+      tmp1_comparison <- "beta_nnls_2 et de beta_lm_2"
       
-      tmp0_comparison_without_0 <-
-        paste("beta_nnls_1 (valeurs > 0) et de beta_lm_1")
-      tmp1_comparison_without_0 <-
-        paste("beta_nnls_2 (valeurs > 0) et de beta_lm_2")
+      tmp0_comparison_without_0 <- "beta_nnls_1 (valeurs > 0) et de beta_lm_1"
+      tmp1_comparison_without_0 <- "beta_nnls_2 (valeurs > 0) et de beta_lm_2"
       
       tmp2 <- paste("nombre de répétitions = ", nb_one_simu)
       tmp3 <- paste("n = " , liste_n[n])
