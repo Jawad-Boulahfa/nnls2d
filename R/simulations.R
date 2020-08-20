@@ -179,6 +179,8 @@ simulations <- function(cores, liste_n, liste_sigma, beta = c(0,1),
       tmp3 <- paste("n = " , liste_n[n])
       tmp4 <- paste("sigma = ", liste_sigma[sigma])
       tmp5 <- paste("nombre de classes = ", classes_hist)
+      tmp6 <- paste("beta = ", beta)
+      
 
       tmp5_comparison <-
         paste("nombre de classes = ", floor(classes_hist/2))
@@ -200,7 +202,7 @@ simulations <- function(cores, liste_n, liste_sigma, beta = c(0,1),
         geom_histogram(bins = classes_hist, col = "black",
                        fill = "blue") + xlab("beta_nnls_1") +
         ggtitle(paste0(tmp0_nnls, "\n", tmp2, ", ",
-                       tmp3, ", ", tmp4, "\n", tmp5))
+                       tmp3, ", ", tmp4, "\n", tmp5, "\n", tmp6))
 
       # nnls_2
       liste_plot_nnls_2[[indice]] <- ggplot(data = finaldf,
@@ -209,7 +211,7 @@ simulations <- function(cores, liste_n, liste_sigma, beta = c(0,1),
         geom_histogram(bins = classes_hist, col = "black",
                        fill = "purple") + xlab("beta_nnls_2") +
         ggtitle(paste0(tmp1_nnls, "\n", tmp2, ", ",
-                       tmp3, ", ", tmp4, "\n", tmp5))
+                       tmp3, ", ", tmp4, "\n", tmp5, "\n", tmp6))
 
       # lm_1
       liste_plot_lm_1[[indice]] <- ggplot(data = finaldf,
@@ -218,7 +220,7 @@ simulations <- function(cores, liste_n, liste_sigma, beta = c(0,1),
         geom_histogram(bins = classes_hist, col = "black",
                        fill = "red") + xlab("beta_lm_1") +
         ggtitle(paste0(tmp0_lm, "\n", tmp2, ", ",
-                       tmp3, ", ", tmp4, "\n", tmp5))
+                       tmp3, ", ", tmp4, "\n", tmp5, "\n", tmp6))
 
       # lm_2
       liste_plot_lm_2[[indice]] <- ggplot(data = finaldf,
@@ -227,7 +229,7 @@ simulations <- function(cores, liste_n, liste_sigma, beta = c(0,1),
         geom_histogram(bins = classes_hist, col = "black",
                        fill = "green") + xlab("beta_lm_2") +
         ggtitle(paste0(tmp1_lm, "\n", tmp2, ", ",
-                       tmp3, ", ", tmp4, "\n", tmp5))
+                       tmp3, ", ", tmp4, "\n", tmp5, "\n", tmp6))
 
 
 
@@ -262,7 +264,7 @@ simulations <- function(cores, liste_n, liste_sigma, beta = c(0,1),
         ggtitle(paste0(tmp_comparison, "\n",
                        tmp0_comparison, "\n",
                        tmp2, ", ", tmp3, ", ",
-                       tmp4, "\n", tmp5_comparison))
+                       tmp4, "\n", tmp5_comparison, "\n", tmp6))
 
 
 
@@ -285,7 +287,7 @@ simulations <- function(cores, liste_n, liste_sigma, beta = c(0,1),
         ggtitle(paste0(tmp_comparison, "\n",
                        tmp1_comparison, "\n",
                        tmp2, ", ", tmp3, ", ",
-                       tmp4, "\n", tmp5_comparison))
+                       tmp4, "\n", tmp5_comparison, "\n", tmp6))
 
 
       # Histogrammes comparatifs sans le pic en 0
@@ -330,7 +332,7 @@ simulations <- function(cores, liste_n, liste_sigma, beta = c(0,1),
         ggtitle(paste0(tmp_comparison, "\n",
                        tmp0_comparison_without_0, "\n",
                        tmp2, ", ", tmp3, ", ",
-                       tmp4, "\n", tmp5))
+                       tmp4, "\n", tmp5, "\n", tmp6))
 
       liste_plot_comparison_2_without_0[[indice]] <-
         ggplot(liste_comparison_2_without_0[[indice]],
@@ -350,7 +352,7 @@ simulations <- function(cores, liste_n, liste_sigma, beta = c(0,1),
         ggtitle(paste0(tmp_comparison, "\n",
                        tmp1_comparison_without_0, "\n",
                        tmp2, ", ", tmp3, ", ",
-                       tmp4, "\n", tmp5))
+                       tmp4, "\n", tmp5, "\n", tmp6))
 
 
 
