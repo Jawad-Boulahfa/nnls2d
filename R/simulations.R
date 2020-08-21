@@ -275,7 +275,7 @@ simulations <- function(cores, liste_n, liste_sigma, beta = c(0,1),
                        bins = floor(classes_hist/2), alpha = 0.2) +
         scale_fill_manual(name = "model", values =
                             c("red","blue")) +
-        ggtitle(paste0(tmp_comparison, "\n",
+        ggtitle(paste0(tmp_comparison, " ",
                        tmp0_comparison, "\n",
                        tmp2, ", ", tmp3, ", ",
                        tmp4, "\n", tmp5_comparison, "\n", tmp6, ", ", tmp7))
@@ -298,7 +298,7 @@ simulations <- function(cores, liste_n, liste_sigma, beta = c(0,1),
                        bins = floor(classes_hist/2), alpha = 0.2) +
         scale_fill_manual(name = "model", values =
                             c("green","purple")) +
-        ggtitle(paste0(tmp_comparison, "\n",
+        ggtitle(paste0(tmp_comparison, " ",
                        tmp1_comparison, "\n",
                        tmp2, ", ", tmp3, ", ",
                        tmp4, "\n", tmp5_comparison, "\n", tmp6, ", ", tmp7))
