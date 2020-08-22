@@ -104,7 +104,7 @@ pcls2_bias_variance_MSE <- function(X, beta = c(0,1), sigma = 1)
     data.frame(
       biais = c(true_bias_nnls_1, true_bias_nnls_2),
       variance = c(true_variance_nnls_1, true_variance_nnls_2),
-      MSE = c(true_MSE_nnls_1, true_MSE_nnls_2)
+      EQM = c(true_MSE_nnls_1, true_MSE_nnls_2)
     )
   row.names(results) <- c("nnls_1", "nnls_2")
 
