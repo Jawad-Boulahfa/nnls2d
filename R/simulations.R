@@ -424,7 +424,7 @@ simulations <- function(cores, liste_n, liste_sigma, beta = c(0,1),
 
       # On rassemble les résultats dans un dataframe
       MSE_list <- c(MSE_nnls_1, MSE_lm_1, MSE_nnls_2, MSE_lm_2)
-      MSE_df <- data.frame(MSE = MSE_list)
+      MSE_df <- data.frame(EQM = MSE_list)
       row.names(MSE_df) <- c("nnls_1", "lm_1", "nnls_2", "lm_2")
 
 
