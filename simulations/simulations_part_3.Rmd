@@ -1,0 +1,197 @@
+---
+title: "Simulations"
+author: "Jawad Boulahfa"
+date: "02/09/2020"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Simulations avec $\beta = $
+```{r}
+rm(list = ls())
+```
+
+## Installation du package nnls2d
+```{r}
+#devtools::install_github("Jawad-Boulahfa/nnls2d")
+```
+
+## Chargement des packages
+```{r, message=FALSE, warning = FALSE}
+# Pour pcls2 et les fonctions de simulation
+library(nnls2d, quietly = TRUE)
+
+# Pour le calcul parallèle
+library(foreach, quietly = TRUE)
+library(iterators, quietly = TRUE)
+library(parallel, quietly = TRUE)
+library(doParallel, quietly = TRUE)
+
+# Pour ggplot2 et la manipulation des dataframes
+library(tidyverse, quietly = TRUE)
+
+# Pour tracer plusieurs graphiques en même temps
+library(gridExtra, quietly = TRUE)
+```
+
+
+## Initialisation
+
+### Listes pour les valeurs de $n$ et de $\sigma$
+```{r}
+liste_n <- 10^5
+liste_sigma <- 1
+```
+
+### Initialisation du calcul parallèle
+```{r}
+nb_one_simu <- 5000 # val max pour shapiro
+cores <- detectCores()
+```
+
+### Choix du nombre de classes pour les histogrammes
+```{r}
+classes_hist <- 50
+```
+
+### Choix du $\alpha$ pour les IC
+```{r}
+alpha <- 0.05
+```
+
+### Choix de la valeur de beta
+```{r}
+beta = c(2, 1)
+```
+
+Remarque préliminaire: La fonction one.simu simule un jeu de données puis calcule $\hat\beta_{nnls}$ et $\hat\beta_{lm}$. Elle affiche les résultats ainsi que le récapitulatif des paramètres choisis sous la forme d'un data.frame.
+
+## Simulations pour beta 
+
+```{r}
+simulations <- nnls2d::simulations(cores = cores,
+                           liste_n = liste_n,
+                           liste_sigma = liste_sigma,
+                           beta = beta, nb_one_simu = nb_one_simu,
+                           classes_hist = classes_hist, alpha = alpha)
+```
+
+On change les noms pour plus de lisibilité.
+```{r}
+liste_final_df <- simulations$liste_final_df
+
+liste_plot_nnls_1 <- simulations$liste_plot_nnls_1
+liste_plot_nnls_2 <- simulations$liste_plot_nnls_2
+
+liste_plot_lm_1 <- simulations$liste_plot_lm_1
+liste_plot_lm_2 <- simulations$liste_plot_lm_2
+
+liste_comparison_1 <- simulations$liste_comparison_1
+liste_comparison_2 <- simulations$liste_comparison_2
+
+liste_comparison_1_without_0 <-
+  simulations$liste_comparison_1_without_0
+liste_comparison_2_without_0 <-
+  simulations$liste_comparison_2_without_0
+
+liste_plot_comparison_1 <- simulations$liste_plot_comparison_1
+liste_plot_comparison_2 <- simulations$liste_plot_comparison_2
+
+liste_plot_comparison_1_without_0 =
+  simulations$liste_plot_comparison_1_without_0
+liste_plot_comparison_2_without_0 =
+  simulations$liste_plot_comparison_2_without_0
+
+liste_resultats_df <- simulations$liste_resultats_df
+liste_comments_resultats_df <- simulations$liste_comments_resultats_df
+
+liste_resultats_theoriques_df <-
+  simulations$liste_resultats_theoriques_df
+liste_comments_resultats_theoriques_df <-
+  simulations$liste_comments_resultats_theoriques_df
+
+liste_IC_df <- simulations$liste_IC_df     
+liste_comments_IC_df <- simulations$liste_comments_IC_df
+
+liste_rapports_1 <- simulations$liste_rapports_1
+liste_rapports_2 <- simulations$liste_rapports_2
+
+liste_comments_rapports_1 <- simulations$liste_comments_rapports_1
+liste_comments_rapports_2 <- simulations$liste_comments_rapports_2
+```
+
+## Histogrammes comparatifs pour $n = `r liste_n[1]`, \sigma = `r liste_sigma[1]`$
+
+```{r}
+grid.arrange(liste_plot_comparison_1[[1]],
+             liste_plot_comparison_2[[1]],
+             nrow=2, ncol=1)
+```
+
+```{r}
+#ggsave(filename = "comparison_first_simu.png", plot =
+#         grid.arrange(liste_plot_comparison_1[[1]],
+#                      liste_plot_comparison_2[[1]], nrow=2, ncol=1),
+#       width = 20, height = 20, units = "cm", device = "png")
+```
+
+```{r}
+grid.arrange(liste_plot_comparison_1_without_0[[1]],
+             liste_plot_comparison_2_without_0[[1]],
+             nrow=2, ncol=1)
+```
+
+## Tests de normalité ($nombre~de~~répétitions = `r  nb_one_simu`,~n = `r  liste_n[1]`,~\sigma = `r  liste_sigma[1]`$)
+```{r}
+shapiro_1 <-
+  shapiro.test(liste_final_df[[1]]$beta_nnls_1)
+pvalue_1 <- shapiro_1$p.value
+```
+
+```{r}
+print(shapiro_1)
+```
+
+```{r}
+shapiro_2 <-
+  shapiro.test(liste_final_df[[1]]$beta_nnls_2)
+pvalue_2 <- shapiro_2$p.value
+```
+
+```{r}
+print(shapiro_2)
+```
+
+## Biais, variance, erreur quadratique moyenne
+```{r}
+cat(liste_comments_resultats_df[[1]], sep = "\n")
+print(liste_resultats_df[[1]])
+```
+
+## Sauvegarde des résultats
+```{r}
+save.image(file = "simulations_part_3.RData")
+```
+
+## Chargement des résultats
+```{r}
+rm(list = ls())
+```
+
+```{r}
+#load(file = "simulations_part_3.RData")
+```
+
+```{r}
+#rm(list = ls())
+```
+
+
+
